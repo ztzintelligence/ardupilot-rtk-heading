@@ -80,6 +80,23 @@ bool sdcard_init()
         }
         printf("Successfully mounted SDCard (slowdown=%u)\n", (unsigned)sd_slowdown);
 
+        // // Create APM Directory if needed
+        // if(AP::FS().mkdir("/HFCU2") != 0)
+        // {
+        //     printf("==================> sdcard mkdir failed\n");
+
+        //     uint8_t buf[512];
+        //     const MKFS_PARM defopt = {FM_FAT32, 0, 0, 0, 0};
+        //     int res = f_mkfs("/", &defopt, buf, sizeof(buf));
+        //     if (res != FR_OK) {
+        //         printf("mkfs failed\n");
+        //     } else {
+        //         printf("mkfs success\n");
+        //     }
+        // } else {
+        //     printf("==================> sdcard mkdir ok.\n");
+        // }
+
         sdcard_running = true;
         return true;
     }
@@ -121,6 +138,7 @@ bool sdcard_init()
             mmcStop(&MMCD1);
             continue;
         }
+
         printf("Successfully mounted SDCard (slowdown=%u)\n", (unsigned)sd_slowdown);
         return true;
     }
