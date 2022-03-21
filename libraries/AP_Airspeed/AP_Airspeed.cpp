@@ -33,6 +33,7 @@
 #include "AP_Airspeed_analog.h"
 #include "AP_Airspeed_ASP5033.h"
 #include "AP_Airspeed_Backend.h"
+#include "AP_Airspeed_RSC.h"
 #if HAL_ENABLE_LIBUAVCAN_DRIVERS
 #include "AP_Airspeed_UAVCAN.h"
 #endif
@@ -376,6 +377,9 @@ void AP_Airspeed::init()
 #if HAL_MSP_AIRSPEED_ENABLED
             sensor[i] = new AP_Airspeed_MSP(*this, i, 0);
 #endif
+            break;
+        case TYPE_RSC:
+            sensor[i] = new AP_Airspeed_RSC(*this, i);
             break;
         }
         if (sensor[i] && !sensor[i]->init()) {

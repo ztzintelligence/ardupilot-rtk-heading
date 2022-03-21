@@ -42,6 +42,10 @@
 #include "AP_Baro_DPS280.h"
 #include "AP_Baro_BMP388.h"
 #include "AP_Baro_Dummy.h"
+
+#include "AP_Baro_RSCMRNE015PASE3_2.h"
+#include "AP_Baro_RSCMRNE015PASE3.h"
+
 #if HAL_ENABLE_LIBUAVCAN_DRIVERS
 #include "AP_Baro_UAVCAN.h"
 #endif
