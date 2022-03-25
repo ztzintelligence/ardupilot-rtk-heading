@@ -40,6 +40,7 @@
  -------------------------------------------------------------------------------
  */
 
+#include <cmath>
 #include <float.h>
 #include "Pressure_Comp.h"
 #include "crc.h"
@@ -355,7 +356,8 @@ CompReturn_Struct Compensate_Pressure(unsigned long int u32PressureInput,unsigne
                                     EEPROM_MAP.af32Coeff2[0]);
 
                 /*! Catch the Possibility of 0/0 Exception */
-                if(f32Denom != 0.00)
+                // if(f32Denom != 0.00)
+                if(fabs(f32Denom) > 0.00001)
                 {
                     /*! Calculate the Pressure Corrected output 2 */
                     f32PressureCorrected2 = (f32PressureCorrected1 / f32Denom);
