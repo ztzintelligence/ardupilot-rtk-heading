@@ -54,7 +54,9 @@ private:
     
     uint8_t _init_blob_index = 0;
     uint32_t _init_blob_time = 0;
-    static const char* const _initialisation_blob[6];
+    static const char* const _initialisation_blob[7];
+
+    uint32_t _last_HDT_ms;
    
     uint32_t crc_error_counter = 0;
 
@@ -140,11 +142,33 @@ private:
         double vertspd;
         float resv;
     };
-    
+
+    struct PACKED heading
+    {
+        uint32_t solstat;
+        uint32_t postype;
+        float length;
+        float heading;
+        float pitch;
+        float resv1;
+        float hdg_std_dev;
+        float ptch_std;
+        uint8_t stnID[4];
+        uint8_t svstracked;
+        uint8_t svslnsolution;
+        uint8_t obsmask;
+        uint8_t multi;
+        uint8_t resv2;
+        uint8_t extsolstat;
+        uint8_t resv3;
+        uint8_t sigmask;
+    };
+
     union PACKED msgbuffer {
         bestvel bestvelu;
         bestpos bestposu;
         psrdop psrdopu;
+        heading headingu;
         uint8_t bytes[256];
     };
     

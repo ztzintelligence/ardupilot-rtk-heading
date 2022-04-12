@@ -51,13 +51,14 @@ AP_GPS_NOVA::AP_GPS_NOVA(AP_GPS &_gps, AP_GPS::GPS_State &_state,
     port->write((const uint8_t*)init_str1, strlen(init_str1));
 }
 
-const char* const AP_GPS_NOVA::_initialisation_blob[6] {
+const char* const AP_GPS_NOVA::_initialisation_blob[7] {
     "\r\n\r\nunlogall\r\n", // cleanup enviroment
     "log bestposb ontime 0.2 0 nohold\r\n", // get bestpos
     "log bestvelb ontime 0.2 0 nohold\r\n", // get bestvel
     "log psrdopb onchanged\r\n", // tersus
     "log psrdopb ontime 0.2\r\n", // comnav
-    "log psrdopb\r\n" // poll message, as dop only changes when a sat is dropped/added to the visible list
+    "log psrdopb\r\n", // poll message, as dop only changes when a sat is dropped/added to the visible list
+    "log DUALANTENNAHEADINGB ontime 0.2\r\n"
 };
 
 // Process all bytes available from the stream
@@ -81,6 +82,12 @@ AP_GPS_NOVA::read(void)
     while (port->available() > 0) {
         uint8_t temp = port->read();
         ret |= parse(temp);
+    }
+
+    if (state.have_gps_yaw) {
+        if (now - _last_HDT_ms > 400) {
+            state.have_gps_yaw = false;
+        }
     }
     
     return ret;
@@ -197,6 +204,8 @@ AP_GPS_NOVA::process_message(void)
 
     check_new_itow(nova_msg.header.nova_headeru.tow, nova_msg.header.nova_headeru.messagelength + nova_msg.header.nova_headeru.headerlength);
     
+    hal.console->printf("get message id: %d.\r\n", messageid);
+
     if (messageid == 42) // bestpos
     {
         const bestpos &bestposu = nova_msg.data.bestposu;
@@ -277,7 +286,31 @@ AP_GPS_NOVA::process_message(void)
 
         state.hdop = (uint16_t) (psrdopu.hdop*100);
         state.vdop = (uint16_t) (psrdopu.htdop*100);
-        return false;
+        // return false;
+    }
+
+    if (messageid == 2042) // heading
+    {
+        const heading &headingu = nova_msg.data.headingu;
+
+        _last_HDT_ms = AP_HAL::millis();
+
+        if(headingu.postype < 50) {
+            state.have_gps_yaw = false;
+            state.have_gps_yaw_accuracy = false;
+            state.gps_yaw_configured = false;
+        } else {
+            state.have_gps_yaw = true;
+            state.have_gps_yaw_accuracy = true;
+            state.gps_yaw_configured = true;
+
+            state.gps_yaw = wrap_360(headingu.heading);
+            state.gps_yaw_accuracy = headingu.hdg_std_dev;
+        
+            state.gps_yaw_time_ms = AP_HAL::millis();
+
+            hal.console->printf("get message 2042: postype is %lu, heading is %f, accuracy is %f.\r\n", headingu.postype, state.gps_yaw, state.gps_yaw_accuracy);
+        }
     }
 
     // ensure out position and velocity stay insync
