@@ -54,7 +54,7 @@ private:
     
     uint8_t _init_blob_index = 0;
     uint32_t _init_blob_time = 0;
-    static const char* const _initialisation_blob[7];
+    static const char* const _initialisation_blob[9];
 
     uint32_t _last_HDT_ms;
    

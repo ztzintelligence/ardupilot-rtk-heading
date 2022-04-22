@@ -68,7 +68,8 @@
 extern const AP_HAL::HAL &hal;
 
 // baudrates to try to detect GPSes with
-const uint32_t AP_GPS::_baudrates[] = {9600U, 115200U, 4800U, 19200U, 38400U, 57600U, 230400U, 460800U};
+// const uint32_t AP_GPS::_baudrates[] = {9600U, 115200U, 4800U, 19200U, 38400U, 57600U, 230400U, 460800U};
+const uint32_t AP_GPS::_baudrates[] = {9600U, 115200U};
 
 // initialisation blobs to send to the GPS to try to get it into the
 // right mode
@@ -666,6 +667,7 @@ void AP_GPS::detect_instance(uint8_t instance)
     while (initblob_state[instance].remaining == 0 && _port[instance]->available() > 0
            && new_gps == nullptr) {
         uint8_t data = _port[instance]->read();
+
         /*
           running a uBlox at less than 38400 will lead to packet
           corruption, as we can't receive the packets in the 200ms

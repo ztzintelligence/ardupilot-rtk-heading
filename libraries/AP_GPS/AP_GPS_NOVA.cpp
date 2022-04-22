@@ -51,14 +51,16 @@ AP_GPS_NOVA::AP_GPS_NOVA(AP_GPS &_gps, AP_GPS::GPS_State &_state,
     port->write((const uint8_t*)init_str1, strlen(init_str1));
 }
 
-const char* const AP_GPS_NOVA::_initialisation_blob[7] {
-    "\r\n\r\nunlogall\r\n", // cleanup enviroment
-    "log bestposb ontime 0.2 0 nohold\r\n", // get bestpos
-    "log bestvelb ontime 0.2 0 nohold\r\n", // get bestvel
-    "log psrdopb onchanged\r\n", // tersus
-    "log psrdopb ontime 0.2\r\n", // comnav
-    "log psrdopb\r\n", // poll message, as dop only changes when a sat is dropped/added to the visible list
-    "log DUALANTENNAHEADINGB ontime 0.2\r\n"
+const char* const AP_GPS_NOVA::_initialisation_blob[9] {
+    "\r\n\r\nunlogall com1\r\n", // cleanup enviroment
+    "log com1 bestposb ontime 0.2 0 nohold\r\n", // get bestpos
+    "log com1 bestvelb ontime 0.2 0 nohold\r\n", // get bestvel
+    "log com1 psrdopb onchanged\r\n", // tersus
+    "log com1 psrdopb ontime 0.2\r\n", // comnav
+    "log com1 psrdopb\r\n", // poll message, as dop only changes when a sat is dropped/added to the visible list
+    "log com1 DUALANTENNAHEADINGB ontime 0.2\r\n",
+    "interfacemode com1 novatel novatel off\r\n",
+    "interfacemode com2 rtcmv3 novatel off\r\n"
 };
 
 // Process all bytes available from the stream
