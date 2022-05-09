@@ -132,6 +132,9 @@ public:
     // output - update value to send to ESC/Servo
     void        output(RotorControlState state);
 
+    // output test: for test throttle.
+    void        output_test(uint8_t type);
+
     // var_info for holding Parameter information
     static const struct AP_Param::GroupInfo var_info[];
 

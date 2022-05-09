@@ -983,6 +983,16 @@ MAV_RESULT GCS_MAVLINK_Copter::handle_command_long_packet(const mavlink_command_
             return MAV_RESULT_TEMPORARILY_REJECTED;
         }
     }
+    case MAV_CMD_TEST_THROTTLE: {
+        if (!copter.motors->armed()) {
+            // if disarmed, accept this cmd
+            copter.motors->set_throttle_test_flag(uint8_t(packet.param1));
+
+            return MAV_RESULT_ACCEPTED;
+        } else {
+            return MAV_RESULT_TEMPORARILY_REJECTED;
+        }
+    }
 #endif
 
     default:

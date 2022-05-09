@@ -209,6 +209,28 @@ void AP_MotorsHeli_RSC::set_throttle_curve()
     splinterp5(thrcrv,_thrcrv_poly);
 }
 
+void AP_MotorsHeli_RSC::output_test(uint8_t type)
+{
+    float dt;
+    uint64_t now = AP_HAL::micros64();
+
+    if (_last_update_us == 0) {
+        _last_update_us = now;
+        dt = 0.001f;
+    } else {
+        dt = 1.0e-6f * (now - _last_update_us);
+        _last_update_us = now;
+    }
+    update_rotor_ramp(1.0f, dt);
+
+    float desired_throttle = calculate_desired_throttle(_collective_in);
+    _control_output = get_idle_output() + (_rotor_ramp_output * (desired_throttle - get_idle_output()));
+    _control_output = constrain_float(_control_output, 0, 1);
+
+    // output to rsc servo
+    write_rsc(_control_output);
+}
+
 // output - update value to send to ESC/Servo
 void AP_MotorsHeli_RSC::output(RotorControlState state)
 {

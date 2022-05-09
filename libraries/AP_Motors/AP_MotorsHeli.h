@@ -163,6 +163,8 @@ public:
 
     void set_servo_test_type(uint8_t type) { _servo_test_type = type; }
     void set_servo_test_value(float value) { _servo_test_value = value; }
+    void set_throttle_test_flag(uint8_t value) { _throttle_test_flag = value; }
+    uint8_t get_throttle_test_flag() { return _throttle_test_flag; }
     virtual void clear_servo_oscillate_angle() {}
 
 protected:
@@ -272,6 +274,7 @@ protected:
     uint8_t         _servo_test_cycle_counter = 0;   // number of test cycles left to run after bootup
     uint8_t         _servo_test_type = 0;
     float           _servo_test_value = 0;
+    uint8_t         _throttle_test_flag = 0;
 
     motor_frame_type _frame_type;
     motor_frame_class _frame_class;

@@ -389,11 +389,9 @@ void NavEKF3_core::SelectMagFusion()
     if (magDataToFuse) {
         if (yaw_source_reset && (yaw_source == AP_NavEKF_Source::SourceYaw::COMPASS ||
                                  yaw_source == AP_NavEKF_Source::SourceYaw::GPS_COMPASS_FALLBACK)) {
-            hal.console->printf("===================> Mag Data To Fuse.\r\n");
             magYawResetRequest = true;
             yaw_source_reset = false;
         }
-        hal.console->printf("===================> To Do controlMagYawReset.\r\n");
         controlMagYawReset();
     }
 
