@@ -106,6 +106,8 @@ public:
     // var_info
     static const struct AP_Param::GroupInfo var_info[];
 
+    void clear_servo_oscillate_angle() override { _oscillate_angle = 0.0f; }
+
 protected:
 
     // init_outputs - initialise Servo/PWM ranges and endpoints
@@ -122,6 +124,8 @@ protected:
 
     // servo_test - move servos through full range of movement
     void servo_test() override;
+
+    void hfcu_servo_test() override;
 
     // external objects we depend upon
     AP_MotorsHeli_RSC   _tail_rotor;            // tail rotor

@@ -628,6 +628,66 @@ void AP_MotorsHeli_Single::servo_test()
     _yaw_in = constrain_float(_yaw_test, -1.0f, 1.0f);
 }
 
+void AP_MotorsHeli_Single::hfcu_servo_test()
+{
+    _servo_test_cycle_time += 1.0f / _loop_rate;
+
+    if (_servo_test_cycle_time >= 0.0f && _servo_test_cycle_time < 3.0f){
+        _oscillate_angle += _servo_test_value * 1 * M_PI / _loop_rate;
+
+        if(_oscillate_angle > M_PI/2) {
+            _oscillate_angle = M_PI/2;
+        }
+
+        if(_oscillate_angle < -M_PI/2) {
+            _oscillate_angle = -M_PI/2;
+        }
+
+        if(_servo_test_type == 1) {
+            _collective_test = 0.5f;
+            
+            _roll_test = sinf(_oscillate_angle);
+            _pitch_test = 0.0f;
+            _yaw_test = 0.0f;
+        } else if(_servo_test_type == 2) {
+            _collective_test = 0.5f;
+
+            _pitch_test = sinf(_oscillate_angle);
+            _roll_test = 0.0f;
+            _yaw_test = 0.0f;
+        } else if(_servo_test_type == 3) {
+            _collective_test = 0.0f;
+
+            _yaw_test = sinf(_oscillate_angle);
+            _roll_test = 0.0f;
+            _pitch_test = 0.0f;
+        } else {
+            _oscillate_angle = 0.0f;
+            _roll_test = 0.0f;
+            _pitch_test = 0.0f;
+            _yaw_test = 0.0f;
+            _collective_test = 0.0f;
+        }
+    } else {
+        _servo_test_cycle_time = 0.0f;
+        _oscillate_angle = 0.0f;
+        _collective_test = 0.0f;
+        _roll_test = 0.0f;
+        _pitch_test = 0.0f;
+        _yaw_test = 0.0f;
+        // decrement servo test cycle counter at the end of the cycle
+        if (_servo_test_type != 0){
+            _servo_test_type = 0;
+        }
+    }
+
+    // over-ride servo commands to move servos through defined ranges
+    _throttle_filter.reset(constrain_float(_collective_test, 0.0f, 1.0f));
+    _roll_in = constrain_float(_roll_test, -1.0f, 1.0f);
+    _pitch_in = constrain_float(_pitch_test, -1.0f, 1.0f);
+    _yaw_in = constrain_float(_yaw_test, -1.0f, 1.0f);
+}
+
 // parameter_check - check if helicopter specific parameters are sensible
 bool AP_MotorsHeli_Single::parameter_check(bool display_msg) const
 {

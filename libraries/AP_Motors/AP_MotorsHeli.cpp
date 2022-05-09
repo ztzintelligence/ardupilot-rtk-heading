@@ -232,11 +232,16 @@ void AP_MotorsHeli::output_armed_zero_throttle()
 // output_disarmed - sends commands to the motors
 void AP_MotorsHeli::output_disarmed()
 {
-    if (_servo_test_cycle_counter > 0){
-        // set servo_test_flag
-        _heliflags.servo_test_running = true;
-        // perform boot-up servo test cycle if enabled
-        servo_test();
+    if ((_servo_test_cycle_counter > 0) || (_servo_test_type != 0)){
+        if(_servo_test_cycle_counter > 0) {
+            // set servo_test_flag
+            _heliflags.servo_test_running = true;
+            // perform boot-up servo test cycle if enabled
+            servo_test();
+        } else {
+            _heliflags.servo_test_running = true;
+            hfcu_servo_test();
+        }
     } else {
         // set servo_test flag
         _heliflags.servo_test_running = false;

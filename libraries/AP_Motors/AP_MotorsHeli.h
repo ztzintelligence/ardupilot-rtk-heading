@@ -161,6 +161,10 @@ public:
 
     const char* get_frame_string() const override { return "HELI"; }
 
+    void set_servo_test_type(uint8_t type) { _servo_test_type = type; }
+    void set_servo_test_value(float value) { _servo_test_value = value; }
+    virtual void clear_servo_oscillate_angle() {}
+
 protected:
 
     // manual servo modes (used for setup)
@@ -215,6 +219,8 @@ protected:
     // to be overloaded by child classes, different vehicle types would have different movement patterns
     virtual void servo_test() = 0;
 
+    virtual void hfcu_servo_test() {}
+
     // write to a swash servo. output value is pwm
     void rc_write_swash(uint8_t chan, float swash_in);
 
@@ -264,6 +270,8 @@ protected:
     // internal variables
     float           _collective_mid_pct = 0.0f;      // collective mid parameter value converted to 0 ~ 1 range
     uint8_t         _servo_test_cycle_counter = 0;   // number of test cycles left to run after bootup
+    uint8_t         _servo_test_type = 0;
+    float           _servo_test_value = 0;
 
     motor_frame_type _frame_type;
     motor_frame_class _frame_class;

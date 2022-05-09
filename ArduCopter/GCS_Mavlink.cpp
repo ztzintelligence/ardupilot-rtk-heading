@@ -970,6 +970,21 @@ MAV_RESULT GCS_MAVLINK_Copter::handle_command_long_packet(const mavlink_command_
         return MAV_RESULT_ACCEPTED;
     }
 
+#if FRAME_CONFIG == HELI_FRAME
+    case MAV_CMD_TEST_SWASH_PLATE: {
+        if (!copter.motors->armed()) {
+            // if disarmed, accept this cmd
+            copter.motors->set_servo_test_type(uint8_t(packet.param1));
+            copter.motors->set_servo_test_value(packet.param2);
+            copter.motors->clear_servo_oscillate_angle();
+
+            return MAV_RESULT_ACCEPTED;
+        } else {
+            return MAV_RESULT_TEMPORARILY_REJECTED;
+        }
+    }
+#endif
+
     default:
         return GCS_MAVLINK::handle_command_long_packet(packet);
     }
